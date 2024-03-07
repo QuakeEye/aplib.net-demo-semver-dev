@@ -148,3 +148,5 @@ jobs:
           path: build
       - name: Create and Publish Release
         run: npx semantic-release@23
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
