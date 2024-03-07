@@ -37,7 +37,7 @@ jobs:
 
   build:
     name: Build for ${{ matrix.targetPlatform }}, ${{ matrix.unity-version }}
-    needs: [sonar, unity-test]
+    needs: [unity-test]
     runs-on: ubuntu-latest
     strategy:
       matrix:
