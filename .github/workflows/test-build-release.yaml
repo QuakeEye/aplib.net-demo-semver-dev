@@ -150,3 +150,22 @@ jobs:
         run: npx semantic-release@23
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  upload-to-gh-pages:
+    name: Upload to GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Retrieve build from artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: build-WebGL-2022.3.19f1
+          path: build
+      - name: Push to gh-pages branch
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: build
