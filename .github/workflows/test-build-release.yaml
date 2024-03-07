@@ -141,7 +141,10 @@ jobs:
         run: npm install semantic-release@23
       - name: Install Semantic Release Dependencies
         run: npm install @semantic-release/exec@6 @semantic-release/commit-analyzer@11 @semantic-release/release-notes-generator@12
+      - name: Retrieve build from artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: build-${{ matrix.targetPlatform }}-${{ matrix.unity-version }}
+          path: build
       - name: Create and Publish Release
-        run: npx semantic-release@23 --dry-run false
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx semantic-release@23
