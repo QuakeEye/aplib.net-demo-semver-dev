@@ -11,11 +11,11 @@ module.exports = {
         //  has its version set and is published respectively with the following
         //  commands:
         
-        ,
-        {
+        // ,
+        // {
         //   "prepareCmd": "set-version ${nextRelease.version}",
-          "publishCmd": "publish-package"
-        }
+          // "publishCmd": "publish-package"
+        // }
       ]
     ],
     "branches": [
