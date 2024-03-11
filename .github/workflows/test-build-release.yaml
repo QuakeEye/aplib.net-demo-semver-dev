@@ -125,9 +125,9 @@ jobs:
         unity-version:
           - 2022.3.19f1
         targetPlatform:
-          - StandaloneOSX
+          # - StandaloneOSX
           - StandaloneWindows64
-          - StandaloneLinux64
+          # - StandaloneLinux64
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -141,15 +141,21 @@ jobs:
         run: npm install semantic-release@23
       - name: Install Semantic Release Dependencies
         run: npm install @semantic-release/exec@6 @semantic-release/commit-analyzer@11 @semantic-release/release-notes-generator@12
+      - name: Create and Publish Release
+        run: npx semantic-release@23
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Retrieve build from artifact
         uses: actions/download-artifact@v4
         with:
           name: build-${{ matrix.targetPlatform }}-${{ matrix.unity-version }}
           path: build
-      - name: Create and Publish Release
-        run: npx semantic-release@23
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload build to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build-${{ matrix.targetPlatform }}-${{ matrix.unity-version }}/*
+          token: ${{ secrets.GITHUB_TOKEN }}
+
 
   upload-to-gh-pages:
     name: Upload to GitHub Pages
