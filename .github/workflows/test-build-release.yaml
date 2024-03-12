@@ -114,7 +114,7 @@ jobs:
           name: build-${{ matrix.targetPlatform }}-${{ matrix.unity-version }}
           path: build
 
-  semantic-release:
+  create-release:
     name: Create and publish a release for ${{ matrix.targetPlatform }}, ${{ matrix.unity-version }}
     needs: build
     runs-on: ubuntu-latest
@@ -123,14 +123,6 @@ jobs:
       # issues: write             # To be able to comment on related issues
       # pull-requests: write      # To be able to comment on released pull requests
       # id-token: write           # To enable use of OIDC for npm provenance
-    strategy:
-      matrix:
-        unity-version:
-          - 2022.3.19f1
-        targetPlatform:
-          # - StandaloneOSX
-          - StandaloneWindows64
-          # - StandaloneLinux64
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -150,6 +142,21 @@ jobs:
           npx semantic-release@23
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  upload-build:
+    name: Upload build to GitHub Release
+    needs: create-release
+    runs-on: ubuntu-latest
+    permissions: write-all
+    strategy:
+      matrix:
+        unity-version:
+          - 2022.3.19f1
+        targetPlatform:
+          # - StandaloneOSX
+          - StandaloneWindows64
+          # - StandaloneLinux64
+    steps:
       - name: Retrieve build from artifact
         uses: actions/download-artifact@v4
         with:
@@ -160,17 +167,15 @@ jobs:
         uses: WyriHaximus/github-action-get-previous-tag@v1.4.0
         with:
           fallback: v1.0.0
-      - name: List Files
-        run: ls -l build
       - name: Zip build
-        run: zip -r build.zip build
+        run: zip -r build-${{ matrix.targetPlatform }}-${{ matrix.unity-version }}.zip build
       - name: Upload build to release
         uses: softprops/action-gh-release@v2
         with:
           files: build.zip
           token: ${{ secrets.GITHUB_TOKEN }}
           tag_name: ${{ steps.previoustag.outputs.tag }}
-
+          append_body: true
 
   # upload-to-gh-pages:
   #   name: Upload to GitHub Pages
