@@ -160,6 +160,8 @@ jobs:
         uses: WyriHaximus/github-action-get-previous-tag@v1.4.0
         with:
           fallback: v1.0.0
+      - name: List Files
+        run: ls -l build
       - name: Upload build to release
         uses: softprops/action-gh-release@v2
         with:
