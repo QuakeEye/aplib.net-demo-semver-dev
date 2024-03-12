@@ -8,4 +8,5 @@ public class Globals : MonoBehaviour
     public static Color s_PhysicsColor = Color.blue;
     public static float s_DebugRayLength = 5f; 
     public static float todoremovethisvariablelmao = 0f;
+    public static float anothertodoremovelolbutnowafeature = 0f;
 }

@@ -118,8 +118,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write           # To be able to publish a GitHub Release
-      # issues: write             # To be able to comment on related issues
-      # pull-requests: write      # To be able to comment on released pull requests
+      issues: write             # To be able to comment on related issues
+      pull-requests: write      # To be able to comment on released pull requests
       # id-token: write           # To enable use of OIDC for npm provenance
     steps:
       - name: Checkout
