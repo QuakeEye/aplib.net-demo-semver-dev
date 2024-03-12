@@ -162,10 +162,12 @@ jobs:
           fallback: v1.0.0
       - name: List Files
         run: ls -l build
+      - name: Zip build
+        run: zip -r build.zip build
       - name: Upload build to release
         uses: softprops/action-gh-release@v2
         with:
-          files: build/**/*
+          files: build.zip
           token: ${{ secrets.GITHUB_TOKEN }}
           tag_name: ${{ steps.previoustag.outputs.tag }}
 
