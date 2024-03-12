@@ -156,7 +156,7 @@ jobs:
         with:
           files: build-${{ matrix.targetPlatform }}-${{ matrix.unity-version }}/*
           token: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ steps.create-release.outputs.version }}
+          tag_name: ${{ steps.create-release.outputs.version }}
 
 
   # upload-to-gh-pages:
