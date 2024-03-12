@@ -156,7 +156,6 @@ jobs:
           name: build-${{ matrix.targetPlatform }}-${{ matrix.unity-version }}
           path: build
       - name: Get Latest Tag
-        #
         id: previoustag
         uses: WyriHaximus/github-action-get-previous-tag@v1.4.0
         with:
@@ -164,7 +163,7 @@ jobs:
       - name: Upload build to release
         uses: softprops/action-gh-release@v2
         with:
-          files: build-${{ matrix.targetPlatform }}-${{ matrix.unity-version }}/*
+          files: build/*
           token: ${{ secrets.GITHUB_TOKEN }}
           tag_name: ${{ steps.previoustag.outputs.tag }}
 
