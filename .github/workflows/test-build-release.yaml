@@ -143,7 +143,8 @@ jobs:
         run: npm install @semantic-release/exec@6 @semantic-release/commit-analyzer@11 @semantic-release/release-notes-generator@12
       - name: Create and Publish Release
         id: create-release
-        run: npx semantic-release@23
+        run: |
+          npx semantic-release@23
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Retrieve build from artifact
@@ -151,12 +152,17 @@ jobs:
         with:
           name: build-${{ matrix.targetPlatform }}-${{ matrix.unity-version }}
           path: build
+      - name: Get Latest Tag
+        id: previoustag
+        uses: WyriHaximus/github-action-get-previous-tag@v1.4.0
+        with:
+          fallback: v1.0.0
       - name: Upload build to release
         uses: softprops/action-gh-release@v2
         with:
           files: build-${{ matrix.targetPlatform }}-${{ matrix.unity-version }}/*
           token: ${{ secrets.GITHUB_TOKEN }}
-          tag_name: ${{ steps.create-release.outputs.version }}
+          tag_name: ${{ steps.previoustag.outputs.tag }}
 
 
   # upload-to-gh-pages:
