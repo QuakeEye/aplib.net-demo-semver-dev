@@ -212,7 +212,7 @@ jobs:
 
   upload-to-gh-pages:
     name: Upload to GitHub Pages
-    needs: build
+    needs: build-webgl
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
