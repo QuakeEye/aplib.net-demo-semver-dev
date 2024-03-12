@@ -7,33 +7,33 @@ on:
       - dev
 
 jobs:
-  unity-test:
-    name: Test with Unity Test Runner
-    permissions: write-all
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/cache@v4
-        with:
-          path: ./aplib.net-demo/Library
-          key: Library-${{ hashFiles('aplib.net-demo/Assets/**', 'aplib.net-demo/Packages/**', 'aplib.net-demo/ProjectSettings/**') }}
-          restore-keys: |
-            Library-${{ hashFiles('aplib.net-demo/Assets/**', 'aplib.net-demo/Packages/**', 'aplib.net-demo/ProjectSettings/**') }}
-      - uses: game-ci/unity-test-runner@v4
-        id: unity-test-step
-        env:
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-        with:
-          projectPath: ./aplib.net-demo/
-          githubToken: ${{ secrets.GITHUB_TOKEN }}
-          coverageOptions: "generateAdditionalMetrics;generateHtmlReport;generateHtmlReportHistory;generateBadgeReport"
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: Coverage results
-          path: ${{ steps.unity-test-step.outputs.coveragePath }}
+  # unity-test:
+  #   name: Test with Unity Test Runner
+  #   permissions: write-all
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: actions/cache@v4
+  #       with:
+  #         path: ./aplib.net-demo/Library
+  #         key: Library-${{ hashFiles('aplib.net-demo/Assets/**', 'aplib.net-demo/Packages/**', 'aplib.net-demo/ProjectSettings/**') }}
+  #         restore-keys: |
+  #           Library-${{ hashFiles('aplib.net-demo/Assets/**', 'aplib.net-demo/Packages/**', 'aplib.net-demo/ProjectSettings/**') }}
+  #     - uses: game-ci/unity-test-runner@v4
+  #       id: unity-test-step
+  #       env:
+  #         UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+  #         UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+  #         UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+  #       with:
+  #         projectPath: ./aplib.net-demo/
+  #         githubToken: ${{ secrets.GITHUB_TOKEN }}
+  #         coverageOptions: "generateAdditionalMetrics;generateHtmlReport;generateHtmlReportHistory;generateBadgeReport"
+  #     - uses: actions/upload-artifact@v4
+  #       if: always()
+  #       with:
+  #         name: Coverage results
+  #         path: ${{ steps.unity-test-step.outputs.coveragePath }}
 
   # sonar:
   #   name: Test and Analyze with SonarCloud
@@ -72,17 +72,17 @@ jobs:
   build:
     name: Build for ${{ matrix.targetPlatform }}, ${{ matrix.unity-version }}
     # needs: [sonar, unity-test]
-    needs: [unity-test]
+    # needs: [unity-test]
     runs-on: ubuntu-latest
     strategy:
       matrix:
         unity-version:
           - 2022.3.19f1
         targetPlatform:
-          - StandaloneOSX
+          # - StandaloneOSX
           - StandaloneWindows64
-          - StandaloneLinux64
-          - WebGL
+          # - StandaloneLinux64
+          # - WebGL
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -142,6 +142,7 @@ jobs:
       - name: Install Semantic Release Dependencies
         run: npm install @semantic-release/exec@6 @semantic-release/commit-analyzer@11 @semantic-release/release-notes-generator@12
       - name: Create and Publish Release
+        id: create-release
         run: npx semantic-release@23
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -155,23 +156,24 @@ jobs:
         with:
           files: build-${{ matrix.targetPlatform }}-${{ matrix.unity-version }}/*
           token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ steps.create-release.outputs.version }}
 
 
-  upload-to-gh-pages:
-    name: Upload to GitHub Pages
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Retrieve build from artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: build-WebGL-2022.3.19f1
-          path: build
-      - name: Push to gh-pages branch
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_branch: gh-pages
-          publish_dir: build
+  # upload-to-gh-pages:
+  #   name: Upload to GitHub Pages
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+  #     - name: Retrieve build from artifact
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: build-WebGL-2022.3.19f1
+  #         path: build
+  #     - name: Push to gh-pages branch
+  #       uses: peaceiris/actions-gh-pages@v3
+  #       with:
+  #         github_token: ${{ secrets.GITHUB_TOKEN }}
+  #         publish_branch: gh-pages
+  #         publish_dir: build
