@@ -165,7 +165,7 @@ jobs:
       - name: Upload build to release
         uses: softprops/action-gh-release@v2
         with:
-          files: build/*
+          files: build/**/*
           token: ${{ secrets.GITHUB_TOKEN }}
           tag_name: ${{ steps.previoustag.outputs.tag }}
 
