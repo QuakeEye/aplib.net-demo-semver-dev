@@ -115,7 +115,7 @@ jobs:
           path: build
 
   create-release:
-    name: Create and publish a release for ${{ matrix.targetPlatform }}, ${{ matrix.unity-version }}
+    name: Create release
     needs: build
     runs-on: ubuntu-latest
     permissions:
@@ -144,7 +144,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   upload-build:
-    name: Upload build to GitHub Release
+    name: Upload build for ${{ matrix.targetPlatform }}, ${{ matrix.unity-version }} to GitHub Release
     needs: create-release
     runs-on: ubuntu-latest
     permissions: write-all
@@ -157,6 +157,10 @@ jobs:
           - StandaloneWindows64
           # - StandaloneLinux64
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Retrieve build from artifact
         uses: actions/download-artifact@v4
         with:
@@ -194,4 +198,4 @@ jobs:
   #       with:
   #         github_token: ${{ secrets.GITHUB_TOKEN }}
   #         publish_branch: gh-pages
-  #         publish_dir: build
+  #         publish_dir: build/WebGL/WebGL
